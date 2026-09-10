@@ -1,0 +1,12 @@
+# SIH26047 Patient Case-Taking — Python Dependencies
+# =====================================================
+# Install: pip install -r requirements.txt
+
+# Core LLM integration
+openai>=1.66.0
+
+# Data validation and schema
+pydantic>=2.0.0
+
+# Environment variable loading
+python-dotenv>=1.0.0
