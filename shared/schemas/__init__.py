@@ -11,7 +11,7 @@ All modules should import ClinicalHistory and its sub-models from here:
 Do NOT create duplicate versions of these models in other modules.
 """
 
-from shared.schemas.clinical_history import (
+from .clinical_history import (
     ClinicalHistory,
     HistoryOfPresentIllness,
     Medication,

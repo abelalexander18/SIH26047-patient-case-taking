@@ -26,13 +26,11 @@ The doctor remains fully responsible for clinical interpretation.
 
 NULL SEMANTICS
 --------------
-All Optional fields use a deliberate three-state convention:
+This schema distinguishes "not mentioned" from an explicit answer.
+For Optional[List[...]] fields: None → never mentioned; [] → explicitly none; value → explicitly stated.
+For Optional[str] (and other scalar Optional[...]) fields: None → never mentioned; value → explicitly stated (including "no"/"unknown").
 
-  None  → Information was NEVER mentioned in the conversation.
-  []    → Patient EXPLICITLY stated there is nothing (e.g., "no allergies").
-  value → Information was EXPLICITLY stated by the patient.
-
-Do NOT conflate "not mentioned" with "none". The extraction module must
+Do NOT conflate "not mentioned" with an explicit negative. The extraction module must
 preserve this distinction exactly.
 """
 
@@ -53,8 +51,9 @@ class HistoryOfPresentIllness(BaseModel):
     The history of the patient's current presenting complaint.
 
     All fields are Optional[str] or Optional[List[str]].
-    None means the topic was never raised; an empty list means
-    the patient was asked and explicitly reported none.
+    None means the topic was never raised. For list fields, an empty list
+    means the patient was asked and explicitly reported none. For scalar
+    fields, explicit negatives are stored as their string value.
     """
 
     onset: Optional[str] = Field(
@@ -130,6 +129,9 @@ class HistoryOfPresentIllness(BaseModel):
         ),
     )
 
+    class Config:
+        extra = "forbid"
+
 
 class Medication(BaseModel):
     """
@@ -160,6 +162,9 @@ class Medication(BaseModel):
             "None if not mentioned."
         ),
     )
+
+    class Config:
+        extra = "forbid"
 
 
 class PersonalSocialHistory(BaseModel):
@@ -201,6 +206,9 @@ class PersonalSocialHistory(BaseModel):
             "None if never mentioned."
         ),
     )
+
+    class Config:
+        extra = "forbid"
 
 
 # ---------------------------------------------------------------------------
@@ -308,3 +316,6 @@ class ClinicalHistory(BaseModel):
             "Empty list [] if patient was asked and denied having any."
         ),
     )
+
+    class Config:
+        extra = "forbid"
