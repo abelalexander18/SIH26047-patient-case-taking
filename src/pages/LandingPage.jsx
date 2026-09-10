@@ -8,7 +8,7 @@ import Badge from '../components/common/Badge';
 import { useInterview } from '../context/InterviewContext';
 
 const LandingPage = () => {
-  const { startInterview } = useInterview();
+  const { startInterview, setViewMode } = useInterview();
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 selection:bg-teal-100 selection:text-teal-900">
@@ -57,7 +57,7 @@ const LandingPage = () => {
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-teal-600 shrink-0" />
-                <span>Protected under DPDP Act 2023 & ABDM standards</span>
+                <span>Designed with DPDP privacy & ABDM standards in mind</span>
               </div>
             </div>
 
@@ -66,12 +66,15 @@ const LandingPage = () => {
               <Button
                 variant="primary"
                 size="lg"
-                onClick={startInterview}
-                className="group font-semibold text-base px-8 py-4 rounded-xl shadow-md hover:shadow-lg transition-all"
+                onClick={() => {
+                  setViewMode('patient');
+                  startInterview();
+                }}
+                className="group font-semibold text-base px-8 py-4 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer"
                 icon={ArrowRight}
                 iconPosition="right"
               >
-                Start Interview
+                Start Intake
               </Button>
             </div>
 
@@ -83,7 +86,7 @@ const LandingPage = () => {
               </div>
               <div className="flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span className="font-medium text-slate-700">DPDP Act 2023 & ABDM Compliant</span>
+                <span className="font-medium text-slate-700">Designed with DPDP & ABDM Principles</span>
               </div>
             </div>
           </div>
@@ -108,7 +111,7 @@ const LandingPage = () => {
           </div>
           <div className="flex items-center gap-6">
             <span>ABDM Aligned</span>
-            <span>DPDP Act 2023 Compliant</span>
+            <span>DPDP Principles</span>
             <span>Emergency: 112 / 108</span>
           </div>
         </div>

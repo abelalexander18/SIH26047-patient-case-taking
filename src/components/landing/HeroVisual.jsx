@@ -30,7 +30,7 @@ const HeroVisual = () => {
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/80 backdrop-blur-md shadow-sm">
             <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-            <span className="text-xs font-semibold text-slate-200">ABDM Clinical Gateway</span>
+            <span className="text-xs font-semibold text-slate-200">Clinical Intake Gateway</span>
           </div>
 
           <div className="flex items-center gap-1 text-[11px] text-teal-400/90 font-mono bg-teal-950/60 border border-teal-800/50 px-2.5 py-1 rounded-md">
@@ -87,8 +87,8 @@ const HeroVisual = () => {
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-slate-200">DPDP Act 2023</div>
-              <div className="text-[10px] text-slate-400">256-bit Encrypted</div>
+              <div className="text-[11px] font-semibold text-slate-200">Privacy Architecture</div>
+              <div className="text-[10px] text-slate-400">DPDP Principles</div>
             </div>
           </div>
 
@@ -98,7 +98,7 @@ const HeroVisual = () => {
             </div>
             <div>
               <div className="text-[11px] font-semibold text-slate-200">OPD Doctor Note</div>
-              <div className="text-[10px] text-slate-400">ABHA Link Ready</div>
+              <div className="text-[10px] text-slate-400">ABHA-Ready Schema</div>
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@ const HeroVisual = () => {
       {/* Floating Micro-Badge Top-Right */}
       <div className="absolute -top-3 -right-3 hidden sm:flex items-center gap-2 px-3 py-2 bg-white rounded-xl shadow-lg border border-slate-200 text-slate-800 animate-float-slow">
         <div className="w-2.5 h-2.5 rounded-full bg-teal-500" />
-        <span className="text-xs font-semibold text-slate-700">99.4% Clinical Accuracy</span>
+        <span className="text-xs font-semibold text-slate-700">Deterministic Safety Screening</span>
       </div>
 
       {/* Floating Micro-Badge Bottom-Left */}

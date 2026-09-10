@@ -11,8 +11,8 @@ const TrustSection = () => {
     },
     {
       icon: Shield,
-      title: 'ABDM & DPDP Act 2023 Aligned',
-      description: 'Your health responses are confidential, 256-bit encrypted, and aligned with National Health Authority (NHA) standards.',
+      title: 'Designed with ABDM & DPDP Principles',
+      description: 'Structured intake designed with patient privacy in mind, ready for future integration with ABDM standards.',
       color: 'teal'
     },
     {

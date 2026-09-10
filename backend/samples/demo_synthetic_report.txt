@@ -1,0 +1,29 @@
+========================================================
+CENTRAL CLINICAL LABORATORY & PRE-CONSULTATION INTAKE
+========================================================
+SYNTHETIC DEMO REPORT - FOR PROTOTYPE TESTING ONLY
+
+Date: 2026-09-10
+Patient Name: Demo Patient
+Age: 52
+Gender: Male
+
+VITALS:
+--------------------------------------------------------
+Blood Pressure: 150/95 mmHg
+Temperature: 102 °F
+
+CLINICAL LABORATORY RESULTS:
+--------------------------------------------------------
+Hemoglobin: 10.2 g/dL (Reference Range: 12.0 - 16.0 g/dL)
+Glucose: 95 mg/dL (Reference Range: 70.0 - 100.0 mg/dL)
+Serum Creatinine: 0.9 mg/dL (Reference Range: 0.6 - 1.3 mg/dL)
+
+MEDICATIONS:
+--------------------------------------------------------
+Medication: Paracetamol 500 mg
+
+INVESTIGATIONS:
+--------------------------------------------------------
+Routine blood panel completed.
+========================================================

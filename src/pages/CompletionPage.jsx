@@ -11,6 +11,7 @@ import {
   ClipboardList,
   Sparkles,
   Home,
+  AlertTriangle,
 } from 'lucide-react';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
@@ -23,6 +24,7 @@ const CompletionPage = () => {
     answeredCount,
     uploadedFile,
     messages,
+    screeningResult,
     isSummaryModalOpen,
     openSummaryModal,
     closeSummaryModal,
@@ -61,7 +63,7 @@ const CompletionPage = () => {
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>ABDM & DPDP Encrypted Intake</span>
+              <span>Designed with ABDM & DPDP Principles</span>
             </div>
 
             {/* Header Home Button */}
@@ -110,9 +112,15 @@ const CompletionPage = () => {
                   Interview completed
                 </h3>
               </div>
-              <Badge variant="emerald" size="sm" dot={true}>
-                Status: Completed
-              </Badge>
+              {screeningResult && screeningResult.detected ? (
+                <Badge variant="amber" size="sm" dot={true}>
+                  Priority: Physician Review Needed
+                </Badge>
+              ) : (
+                <Badge variant="emerald" size="sm" dot={true}>
+                  Status: Completed
+                </Badge>
+              )}
             </div>
 
             {/* Key Metrics Grid */}
@@ -144,23 +152,44 @@ const CompletionPage = () => {
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                <span className="text-xs text-slate-500 flex items-center gap-1.5 mb-1 font-medium">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  Status
+              <div className={`p-3.5 rounded-xl border ${screeningResult && screeningResult.detected ? 'bg-amber-50/70 border-amber-200' : 'bg-slate-50 border-slate-200/70'}`}>
+                <span className={`text-xs flex items-center gap-1.5 mb-1 font-medium ${screeningResult && screeningResult.detected ? 'text-amber-700' : 'text-slate-500'}`}>
+                  {screeningResult && screeningResult.detected ? (
+                    <>
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                      Triage Finding
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                      Status
+                    </>
+                  )}
                 </span>
-                <span className="text-lg font-bold text-emerald-700">
-                  Completed
+                <span className={`text-sm sm:text-base font-bold uppercase truncate ${screeningResult && screeningResult.detected ? 'text-amber-900' : 'text-emerald-700'}`}>
+                  {screeningResult && screeningResult.detected ? `${screeningResult.severity} Alert` : 'Completed'}
                 </span>
               </div>
             </div>
 
             {/* Physician Triage Note */}
-            <div className="p-3.5 rounded-xl bg-blue-50/60 border border-blue-100 text-xs text-blue-900 leading-relaxed flex items-start gap-2.5">
-              <Sparkles className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+            <div className={`p-3.5 rounded-xl border text-xs leading-relaxed flex items-start gap-2.5 ${
+              screeningResult && screeningResult.detected ? 'bg-amber-50 border-amber-200 text-amber-950' : 'bg-blue-50/60 border-blue-100 text-blue-900'
+            }`}>
+              <Sparkles className={`w-4 h-4 shrink-0 mt-0.5 ${screeningResult && screeningResult.detected ? 'text-amber-600' : 'text-blue-600'}`} />
               <div>
-                <span className="font-semibold block mb-0.5">Next Steps for Consultation:</span>
-                Your responses have been prepared under ABDM clinical standards and will be presented to your consulting doctor or hospital OPD. You can view the synthesized summary or download a copy for your personal records.
+                <span className="font-semibold block mb-0.5">
+                  {screeningResult && screeningResult.detected ? 'Important Physician Attention Notice:' : 'Next Steps for Consultation:'}
+                </span>
+                {screeningResult && screeningResult.detected ? (
+                  <span>
+                    A predefined screening pattern (<code>{screeningResult.rule_id}</code>: {screeningResult.message}) was detected. <strong>Recommended Triage:</strong> {screeningResult.recommendation}
+                  </span>
+                ) : (
+                  <span>
+                    Your responses have been formatted following ABDM clinical summary standards and will be presented to your consulting doctor or hospital OPD. You can view the synthesized summary or download a copy for your personal records.
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -226,7 +255,7 @@ const CompletionPage = () => {
 
       {/* Minimal Footer */}
       <footer className="w-full border-t border-slate-200/60 bg-white py-4 text-center text-xs text-slate-400">
-        Arogya AI Clinical Systems • Aligned with ABDM (Ayushman Bharat Digital Mission) & DPDP Act 2023 • Emergency: 112 / 108
+        Arogya AI Clinical Systems • Designed with ABDM & DPDP Principles (Academic Prototype) • Emergency: 112 / 108
       </footer>
     </div>
   );

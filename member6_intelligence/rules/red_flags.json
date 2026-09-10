@@ -1,0 +1,191 @@
+[
+  {
+    "flag_id": "RF-CARD-001",
+    "category": "Cardiovascular Emergency",
+    "severity": "CRITICAL",
+    "title": "Suspected Acute Coronary Syndrome (ACS / Myocardial Infarction)",
+    "keywords": [
+      "chest pain", "crushing chest", "pressure in chest", "radiating to arm", "radiating to jaw",
+      "angina", "substernal pain", "cardiac pain", "heaviness in chest", "left shoulder pain"
+    ],
+    "secondary_keywords": [
+      "sweating", "diaphoresis", "shortness of breath", "nausea", "dizziness", "clammy"
+    ],
+    "vital_triggers": {
+      "systolic_bp_min": 180,
+      "systolic_bp_max": 85,
+      "heart_rate_max": 130
+    },
+    "clinical_rationale": "Severe acute chest discomfort especially radiating to left arm, neck, or jaw accompanied by autonomic symptoms strongly suggests myocardial ischemia.",
+    "recommended_action": "Initiate immediate emergency medical services (EMS), administer high-flow oxygen if SpO2 < 90%, perform urgent 12-lead ECG, and prepare emergency cardiology transfer. Halt routine outpatient intake."
+  },
+  {
+    "flag_id": "RF-CARD-002",
+    "category": "Cardiovascular Emergency",
+    "severity": "CRITICAL",
+    "title": "Hypertensive Emergency / Crisis",
+    "keywords": [
+      "severe headache", "blurred vision", "chest pain", "confusion", "epistaxis", "shortness of breath"
+    ],
+    "vital_triggers": {
+      "systolic_bp_min": 180,
+      "diastolic_bp_min": 120
+    },
+    "clinical_rationale": "Extreme blood pressure elevation (Systolic >= 180 and/or Diastolic >= 120 mmHg) with acute symptomatic complaints indicates potential acute target-organ damage.",
+    "recommended_action": "Stat physician evaluation, repeat blood pressure in both arms, assess neurological and fundoscopic status, and transfer to acute care for controlled intravenous antihypertensive titration."
+  },
+  {
+    "flag_id": "RF-NEURO-001",
+    "category": "Neurological Emergency",
+    "severity": "CRITICAL",
+    "title": "Acute Stroke / Transient Ischemic Attack (FAST Criteria)",
+    "keywords": [
+      "facial droop", "face drooping", "arm weakness", "one-sided weakness", "hemiparesis",
+      "slurred speech", "difficulty speaking", "aphasia", "loss of vision", "sudden numbness",
+      "paralysis", "mouth deviation", "unable to lift arm"
+    ],
+    "secondary_keywords": [],
+    "vital_triggers": {},
+    "clinical_rationale": "Sudden onset focal neurological deficits (FAST: Face, Arms, Speech, Time) denote acute cerebrovascular ischemia or intracranial hemorrhage with critical time-to-thrombolysis window.",
+    "recommended_action": "Establish exact time last known well, immediately mobilize 'Code Stroke' or emergency transport for non-contrast brain CT / MRI. Do not administer oral fluids or medications."
+  },
+  {
+    "flag_id": "RF-NEURO-002",
+    "category": "Neurological Emergency",
+    "severity": "CRITICAL",
+    "title": "Thunderclap Headache / Possible Subarachnoid Hemorrhage or Meningism",
+    "keywords": [
+      "worst headache of my life", "thunderclap headache", "sudden severe headache", "neck stiffness",
+      "nuchal rigidity", "photophobia", "fever with headache", "kernig"
+    ],
+    "secondary_keywords": [],
+    "vital_triggers": {},
+    "clinical_rationale": "Hyperacute maximal headache onset ('thunderclap') with or without meningeal irritation (nuchal rigidity) is a classic herald for ruptured aneurysm or acute meningitis.",
+    "recommended_action": "Emergency neurological and neurosurgical consult, prompt non-contrast head CT and lumbar puncture if indicated. Isolation precautions if meningococcemia suspected."
+  },
+  {
+    "flag_id": "RF-RESP-001",
+    "category": "Respiratory Emergency",
+    "severity": "CRITICAL",
+    "title": "Impending Respiratory Failure / Severe Hypoxemia",
+    "keywords": [
+      "gasping for air", "severe shortness of breath", "unable to speak", "turning blue",
+      "cyanosis", "stridor", "air hunger", "suffocation"
+    ],
+    "secondary_keywords": [],
+    "vital_triggers": {
+      "spo2_max": 89,
+      "respiratory_rate_min": 30,
+      "respiratory_rate_max": 9
+    },
+    "clinical_rationale": "Critical hypoxemia (SpO2 < 90%), severe tachypnea (>30/min), or severe bradypnea (<10/min) indicates respiratory muscle exhaustion and imminent arrest.",
+    "recommended_action": "Immediately support airway, administer high-flow oxygen, prepare for bag-valve-mask ventilation or endotracheal intubation, and transfer to ICU."
+  },
+  {
+    "flag_id": "RF-RESP-002",
+    "category": "Allergic / Airway Emergency",
+    "severity": "CRITICAL",
+    "title": "Suspected Anaphylaxis / Airway Compromise",
+    "keywords": [
+      "swelling of lips", "swelling of tongue", "throat tightness", "throat closing",
+      "wheezing with hives", "anaphylaxis", "difficulty swallowing", "hoarseness after medicine"
+    ],
+    "secondary_keywords": [
+      "hives", "urticaria", "rash", "itching", "hypotension", "dizziness"
+    ],
+    "vital_triggers": {
+      "systolic_bp_max": 90
+    },
+    "clinical_rationale": "Rapid onset mucosal angioedema with respiratory compromise and/or hypotension is life-threatening anaphylaxis requiring immediate emergency medical attention.",
+    "recommended_action": "Stat emergency physician evaluation for impending airway compromise, position supine with legs elevated, maintain airway vigilance, and alert resuscitation team."
+  },
+  {
+    "flag_id": "RF-GI-001",
+    "category": "Gastrointestinal Emergency",
+    "severity": "CRITICAL",
+    "title": "Acute Surgical Abdomen / Peritoneal Irritation",
+    "keywords": [
+      "rigid abdomen", "board-like abdomen", "rebound tenderness", "severe abdominal pain",
+      "guarding", "acute belly pain", "sudden intense stomach pain"
+    ],
+    "secondary_keywords": [
+      "vomiting", "fever", "distension", "inability to pass flatus"
+    ],
+    "vital_triggers": {
+      "heart_rate_min": 110
+    },
+    "clinical_rationale": "Rigid involuntary guarding and extreme acute abdominal pain indicate visceral perforation, acute peritonitis, or ischemic bowel.",
+    "recommended_action": "NPO (nil per os / nothing by mouth), place wide-bore IV access, avoid opioid masking until surgeon evaluation, stat surgical consult."
+  },
+  {
+    "flag_id": "RF-GI-002",
+    "category": "Gastrointestinal Emergency",
+    "severity": "URGENT",
+    "title": "Active Gastrointestinal Hemorrhage",
+    "keywords": [
+      "vomiting blood", "hematemesis", "coffee ground emesis", "black tarry stool", "melena",
+      "passing blood in stool", "hematochezia"
+    ],
+    "secondary_keywords": [
+      "lightheaded", "dizzy", "pale", "weakness", "fainting"
+    ],
+    "vital_triggers": {
+      "systolic_bp_max": 95,
+      "heart_rate_min": 105
+    },
+    "clinical_rationale": "Frank hematemesis or melena signifies substantial gastrointestinal tract bleeding with imminent hemorrhagic hypovolemia.",
+    "recommended_action": "Urgent gastroenterology evaluation for endoscopy, IV fluid resuscitation, type and crossmatch blood, stop any NSAIDs or anticoagulant intake."
+  },
+  {
+    "flag_id": "RF-INF-001",
+    "category": "Sepsis & Severe Infection",
+    "severity": "CRITICAL",
+    "title": "Potential Sepsis / Septic Shock Warning",
+    "keywords": [
+      "high fever with chills", "severe shivering", "confusion with fever", "cold and clammy",
+      "mottled skin", "not making urine", "drowsy with fever", "rigors"
+    ],
+    "secondary_keywords": [],
+    "vital_triggers": {
+      "temperature_f_min": 101.5,
+      "heart_rate_min": 105,
+      "respiratory_rate_min": 22,
+      "systolic_bp_max": 90
+    },
+    "clinical_rationale": "Presence of systemic inflammatory response (fever/tachycardia/tachypnea) coupled with altered mentation or hypotension meets sepsis criteria.",
+    "recommended_action": "Initiate Sepsis Hour-1 bundle: draw blood cultures, check serum lactate, begin broad-spectrum IV antimicrobials and rapid crystalloid fluid resuscitation."
+  },
+  {
+    "flag_id": "RF-METAB-001",
+    "category": "Metabolic Emergency",
+    "severity": "CRITICAL",
+    "title": "Suspected Diabetic Ketoacidosis (DKA) / Severe Hypoglycemia Crisis",
+    "keywords": [
+      "fruity breath", "acetone breath", "kussmaul breathing", "deep rapid breathing",
+      "profound lethargy with sugar", "diabetic unconscious", "unresponsive diabetic"
+    ],
+    "secondary_keywords": [
+      "polyuria", "polydipsia", "vomiting", "abdominal pain", "dehydration"
+    ],
+    "vital_triggers": {
+      "blood_glucose_mg_dl_min": 350,
+      "blood_glucose_mg_dl_max": 55
+    },
+    "clinical_rationale": "Extreme glycemic extremes (<55 or >350 mg/dL) with rapid breathing or cognitive depression indicate life-threatening glycemic decompensation.",
+    "recommended_action": "Stat emergency physician evaluation for acute glycemic decompensation, assess capillary blood glucose, ketones, and initiate urgent metabolic triage."
+  },
+  {
+    "flag_id": "RF-AYUSH-001",
+    "category": "Ayush Triage / Clinical Contraindication",
+    "severity": "URGENT",
+    "title": "Acute Emergency Contraindication for Routine Ayush Therapy",
+    "keywords": [
+      "acute trauma", "severe burn", "fracture", "active hemorrhage", "convulsions",
+      "seizures", "loss of consciousness", "syncope", "poisoning", "snake bite"
+    ],
+    "secondary_keywords": [],
+    "vital_triggers": {},
+    "clinical_rationale": "Under Ministry of Ayush clinical practice guidelines, acute emergencies (trauma, active bleeding, toxic exposure, status epilepticus) are strict contraindications for routine outpatient Ayurvedic treatment and mandate emergency hospital diversion.",
+    "recommended_action": "Halt outpatient Ayurvedic case-taking. Document emergency triage handoff and redirect patient immediately to emergency department / trauma center."
+  }
+]

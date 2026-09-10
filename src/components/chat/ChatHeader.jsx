@@ -1,8 +1,9 @@
 import React from 'react';
-import { Activity, XSquare, LogOut, FileText, CheckCircle2, Home } from 'lucide-react';
+import { Activity, XSquare, LogOut, FileText, CheckCircle2, Home, Stethoscope } from 'lucide-react';
 import ProgressBar from './ProgressBar';
 import Button from '../common/Button';
 import Badge from '../common/Badge';
+import { useInterview } from '../../context/InterviewContext';
 
 const ChatHeader = ({
   appName = "Arogya AI",
@@ -12,6 +13,7 @@ const ChatHeader = ({
   onGoHome,
   uploadedFile,
 }) => {
+  const { setViewMode } = useInterview();
   return (
     <header className="w-full bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-2xs">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 sm:h-18 flex items-center justify-between gap-4">
@@ -47,6 +49,15 @@ const ChatHeader = ({
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => setViewMode('doctor')}
+            className="text-xs font-semibold text-slate-700 hover:text-blue-700 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            title="Open Doctor Interface & Clinical Dashboard"
+          >
+            <Stethoscope className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <span className="hidden sm:inline">Doctor Portal</span>
+          </button>
+
           {onGoHome && (
             <Button
               variant="ghost"
