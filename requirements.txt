@@ -3,7 +3,7 @@
 # Install: pip install -r requirements.txt
 
 # Core LLM integration
-openai>=1.66.0
+google-genai
 
 # Data validation and schema
 pydantic>=2.0.0

@@ -6,7 +6,7 @@ Clinical history extraction from patient conversation text.
 RESPONSIBILITIES
 ----------------
 - Load configuration from environment variables.
-- Call the OpenAI API with structured output.
+- Call the Google Gemini API with structured output.
 - Validate and return a ClinicalHistory Pydantic object.
 - Raise named exceptions for all failure modes.
 
@@ -30,26 +30,19 @@ and then pass `history` to the summary generator and red-flag engine.
 
 ENVIRONMENT VARIABLES REQUIRED
 -------------------------------
-    OPENAI_API_KEY   — your OpenAI secret key
-    OPENAI_MODEL     — model name, e.g. "gpt-4o-mini"
+    GEMINI_API_KEY   — your Google Gemini API key
+    GEMINI_MODEL     — model name, e.g. "gemini-2.5-flash"
 
 STRUCTURED OUTPUT
 -----------------
-Uses openai>=1.66.0 Responses API:
-    client.responses.parse(input=messages, text_format=ClinicalHistory)
-
-This returns a response object whose `.output_parsed` attribute is
-already a validated ClinicalHistory Pydantic instance.
-No manual JSON parsing required.
-
-If the model returns malformed output, `.output_parsed` will be None —
-this is handled explicitly.
+Uses Google GenAI API with JSON Schema:
+    client.models.generate_content(..., config=types.GenerateContentConfig(response_mime_type="application/json", response_schema=ClinicalHistory))
 
 EXCEPTIONS RAISED
 -----------------
-    ExtractionConfigError     — missing OPENAI_API_KEY or OPENAI_MODEL
+    ExtractionConfigError     — missing GEMINI_API_KEY or GEMINI_MODEL
     ExtractionInputError      — empty or invalid conversation_text
-    ExtractionAPIError        — OpenAI network / authentication / rate-limit error
+    ExtractionAPIError        — Gemini network / authentication / rate-limit error
     ExtractionParseError      — model output could not be parsed into ClinicalHistory
 """
 
@@ -92,7 +85,7 @@ class ExtractionInputError(ValueError):
 
 class ExtractionAPIError(Exception):
     """
-    Raised when the OpenAI API call fails (network, auth, rate limit, etc.).
+    Raised when the Gemini API call fails (network, auth, rate limit, etc.).
     The backend should map this to HTTP 502 (Bad Gateway) or HTTP 503.
     The original exception is available via __cause__.
     """
@@ -119,20 +112,20 @@ def _load_config() -> tuple[str, str]:
         (api_key, model_name)
 
     Raises:
-        ExtractionConfigError: if OPENAI_API_KEY or OPENAI_MODEL is not set.
+        ExtractionConfigError: if GEMINI_API_KEY or GEMINI_MODEL is not set.
     """
-    api_key: Optional[str] = os.environ.get("OPENAI_API_KEY")
-    model: Optional[str] = os.environ.get("OPENAI_MODEL")
+    api_key: Optional[str] = os.environ.get("GEMINI_API_KEY")
+    model: Optional[str] = os.environ.get("GEMINI_MODEL")
 
     if not api_key:
         raise ExtractionConfigError(
-            "OPENAI_API_KEY environment variable is not set. "
+            "GEMINI_API_KEY environment variable is not set. "
             "Set it in your .env file or deployment environment."
         )
     if not model:
         raise ExtractionConfigError(
-            "OPENAI_MODEL environment variable is not set. "
-            "Set it in your .env file (e.g., OPENAI_MODEL=gpt-4o-mini)."
+            "GEMINI_MODEL environment variable is not set. "
+            "Set it in your .env file (e.g., GEMINI_MODEL=gemini-2.5-flash)."
         )
 
     return api_key, model
@@ -164,6 +157,27 @@ def _build_user_message(conversation_text: str) -> str:
     )
 
 
+def _clean_schema(schema: dict) -> dict:
+    """
+    Recursively remove 'additionalProperties' and 'additional_properties' 
+    from a JSON schema, as the Gemini API strictly rejects them.
+    """
+    if not isinstance(schema, dict):
+        return schema
+        
+    cleaned = {}
+    for key, value in schema.items():
+        if key in ("additionalProperties", "additional_properties"):
+            continue
+        if isinstance(value, dict):
+            cleaned[key] = _clean_schema(value)
+        elif isinstance(value, list):
+            cleaned[key] = [_clean_schema(item) if isinstance(item, dict) else item for item in value]
+        else:
+            cleaned[key] = value
+    return cleaned
+
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -188,9 +202,9 @@ async def extract_history(conversation_text: str) -> ClinicalHistory:
         Fields where the patient explicitly denied will be [] (empty lists).
 
     Raises:
-        ExtractionConfigError:  OPENAI_API_KEY or OPENAI_MODEL not configured.
+        ExtractionConfigError:  GEMINI_API_KEY or GEMINI_MODEL not configured.
         ExtractionInputError:   conversation_text is empty or not a string.
-        ExtractionAPIError:     OpenAI API request failed.
+        ExtractionAPIError:     Gemini API request failed.
         ExtractionParseError:   Model output could not be validated as ClinicalHistory.
 
     Example:
@@ -207,61 +221,64 @@ async def extract_history(conversation_text: str) -> ClinicalHistory:
     # 3. Build messages
     user_message = _build_user_message(conversation_text)
 
-    messages = [
-        {"role": "system", "content": EXTRACTION_SYSTEM_PROMPT},
-        {"role": "user", "content": user_message},
-    ]
+    # 4. Generate Gemini-compatible JSON schema
+    raw_schema = ClinicalHistory.model_json_schema()
+    gemini_schema = _clean_schema(raw_schema)
 
-    # 4. Call OpenAI Responses API with structured output
-    # Import here to avoid import-time side effects when the module is loaded
-    # without OPENAI_API_KEY (e.g., during testing with mocks).
+    # 5. Call Gemini API with structured output
     try:
-        from openai import AsyncOpenAI
-        import openai as _openai_module
+        from google import genai
+        from google.genai import types
+        from google.genai.errors import APIError
     except ImportError as exc:
         raise ExtractionConfigError(
-            "The 'openai' package is not installed. "
-            "Run: pip install openai>=1.66.0"
+            "The 'google-genai' package is not installed. "
+            "Run: pip install google-genai"
         ) from exc
 
-    client = AsyncOpenAI(api_key=api_key)
+    client = genai.Client(api_key=api_key)
 
     try:
-        response = await client.responses.parse(
+        # NOTE: the google-genai SDK provides an async client wrapper or sync client wrapper.
+        # client.models.generate_content is synchronous.
+        # Since extract_history is async, we should use client.aio.models.generate_content if available,
+        # otherwise run in an executor. Using client.aio is standard for google-genai if it's the newer SDK.
+        response = await client.aio.models.generate_content(
             model=model,
-            input=messages,
-            text_format=ClinicalHistory,
+            contents=[
+                types.Content(role="user", parts=[
+                    types.Part.from_text(text=EXTRACTION_SYSTEM_PROMPT + "\n\n" + user_message)
+                ])
+            ],
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=gemini_schema,
+            ),
         )
-    except _openai_module.AuthenticationError as exc:
+    except APIError as exc:
         raise ExtractionAPIError(
-            "OpenAI authentication failed. Check that OPENAI_API_KEY is correct."
-        ) from exc
-    except _openai_module.RateLimitError as exc:
-        raise ExtractionAPIError(
-            "OpenAI rate limit exceeded. The request could not be completed."
-        ) from exc
-    except _openai_module.APIConnectionError as exc:
-        raise ExtractionAPIError(
-            "Could not connect to OpenAI API. Check network connectivity."
-        ) from exc
-    except _openai_module.APIStatusError as exc:
-        raise ExtractionAPIError(
-            f"OpenAI API returned an error (status {exc.status_code}): {exc.message}"
+            f"Gemini API returned an error: {exc.message}"
         ) from exc
     except Exception as exc:
         raise ExtractionAPIError(
-            f"Unexpected error during OpenAI API call: {exc}"
+            f"Unexpected error during Gemini API call: {exc}"
         ) from exc
 
-    # 5. Extract and validate the parsed result
-    # response.output_parsed is already a validated ClinicalHistory instance
-    # because we passed text_format=ClinicalHistory to .parse()
-    if response.output_parsed is None:
+    if not response.text:
         raise ExtractionParseError(
-            "The model returned a response but it could not be parsed into "
-            "a valid ClinicalHistory."
+            "The model returned an empty response."
         )
 
-    history: ClinicalHistory = response.output_parsed
+    # 6. Extract and validate the parsed result
+    try:
+        # Since we passed a raw dictionary for response_schema, google-genai
+        # may not populate response.parsed automatically with our Pydantic model.
+        # We must validate the raw JSON text directly against ClinicalHistory.
+        history = ClinicalHistory.model_validate_json(response.text)
+    except ValidationError as exc:
+        raise ExtractionParseError(
+            "The model returned a response but it could not be parsed into "
+            f"a valid ClinicalHistory: {exc}"
+        ) from exc
 
     return history
