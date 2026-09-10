@@ -118,7 +118,7 @@ export const CLINICAL_STAGES = [
     progress: 100,
     prompt: "Finalizing clinical intake",
     nextQuestion: () => {
-      return "Dhanyavaad (Thank you). Your complete clinical intake has been compiled according to ABDM clinical standards. Your consulting doctor will review this summary before your consultation.";
+      return "Dhanyavaad (Thank you). Your complete clinical intake has been compiled following ABDM clinical record formats. Your consulting doctor will review this summary before your consultation.";
     },
     quickReplies: [
       "End Interview & View Summary"
@@ -127,10 +127,10 @@ export const CLINICAL_STAGES = [
 ];
 
 export const INDIAN_CLINICAL_STANDARDS = {
-  regulatory: "ABDM & DPDP Act 2023 Compliant",
-  dishaCompliant: true,
-  abhaEnabled: true,
+  regulatory: "Designed following ABDM & DPDP Guidelines (Prototype)",
+  dishaCompliant: false,
+  abhaEnabled: false,
   emergencyHelpline: "112 / 108",
   ambulanceHelpline: "108",
-  medicalAuthority: "National Health Authority (NHA) Standards",
+  medicalAuthority: "National Health Authority (NHA) Guidelines",
 };

@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIH26047 — Clinical Red Flag & OCR Abnormality Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0b0f17;
+      --bg-secondary: #131a26;
+      --bg-card: #182234;
+      --bg-card-hover: #1f2c42;
+      --border-color: #24344d;
+      --border-light: #314463;
+      --text-main: #f0f4fc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent-ayush: #10b981;
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.12);
+      --danger-border: rgba(239, 68, 68, 0.4);
+      --urgent: #f97316;
+      --urgent-bg: rgba(249, 115, 22, 0.12);
+      --urgent-border: rgba(249, 115, 22, 0.4);
+      --warning: #eab308;
+      --warning-bg: rgba(234, 179, 8, 0.12);
+      --warning-border: rgba(234, 179, 8, 0.4);
+      --normal: #10b981;
+      --normal-bg: rgba(16, 185, 129, 0.12);
+      --normal-border: rgba(16, 185, 129, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 24px;
+      min-height: 100vh;
+    }
+    .container { max-width: 1300px; margin: 0 auto; }
+
+    header {
+      background: linear-gradient(135deg, #131f33 0%, #172a45 100%);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px 26px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .header-titles h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-titles p { color: var(--text-muted); font-size: 0.85rem; margin-top: 3px; }
+    .badge-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-ayush { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .guardrail-chip {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #93c5fd;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      max-width: 420px;
+    }
+
+    /* Tab Switcher */
+    .tabs-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+    .tab-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    /* Quick Scenarios */
+    .scenarios-bar {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+    }
+    .scenarios-label {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .scenario-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-scenario {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .btn-scenario:hover { background: var(--bg-card-hover); border-color: var(--primary); }
+    .btn-scenario.crit { border-left: 3px solid var(--danger); }
+    .btn-scenario.norm { border-left: 3px solid var(--normal); }
+    .btn-scenario.urg { border-left: 3px solid var(--urgent); }
+
+    /* Grid */
+    .main-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 20px; }
+    @media (max-width: 960px) { .main-grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+
+    .form-group { margin-bottom: 12px; }
+    .form-label { display: block; font-size: 0.76rem; font-weight: 500; color: var(--text-muted); margin-bottom: 4px; }
+    .form-control {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+    }
+    .form-control:focus { outline: none; border-color: var(--primary); }
+    textarea.form-control { resize: vertical; min-height: 60px; }
+    .vitals-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn-submit:hover { background: #1e40af; }
+
+    /* Alerts */
+    .red-flag-card {
+      background: var(--bg-card);
+      border-left: 4px solid var(--danger);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .red-flag-card.urgent { border-left-color: var(--urgent); }
+    .red-flag-card.none { border-left-color: var(--normal); }
+    .flag-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .flag-title { font-size: 0.92rem; font-weight: 600; color: #fca5a5; }
+    .flag-cat { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; }
+    .cue-pill {
+      display: inline-block;
+      background: rgba(239, 68, 68, 0.2);
+      color: #fecaca;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      margin: 2px;
+    }
+    .flag-action {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 0.78rem;
+      color: #93c5fd;
+      margin-top: 8px;
+    }
+
+    /* Abnormality Table */
+    .abnormal-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 8px; }
+    .abnormal-table th { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--border-color); color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; }
+    .abnormal-table td { padding: 8px 9px; border-bottom: 1px solid rgba(36, 52, 77, 0.4); }
+    .status-tag { padding: 2px 6px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; }
+    .tag-high { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .tag-low { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
+    .tag-normal { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .tag-unknown { background: rgba(148, 163, 184, 0.2); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.4); }
+
+    .raw-box {
+      background: #0d131f;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      color: #94a3b8;
+      max-height: 180px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-titles">
+        <h1>
+          <span>🏥 SIH26047</span>
+          <span class="badge-pill badge-ayush">Ministry of Ayush / AIIA</span>
+        </h1>
+        <p>Member 6: Clinical Red-Flag Screening & Medical Abnormality Pipeline</p>
+      </div>
+      <div class="guardrail-chip">
+        🛡️ <strong>Clinical Decision Support Prototype</strong><br>
+        Deterministic safety triage. Non-diagnostic and non-prescriptive.
+      </div>
+    </header>
+
+    <!-- Tab Bar -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchTab('flow1')">🚨 Flow 1: Clinical History → Red Flag Engine</button>
+      <button class="tab-btn" onclick="switchTab('flow2')">📄 Flow 2: Medical Report OCR → Abnormality Detector</button>
+      <button class="tab-btn" onclick="switchTab('flow3')">💬 Flow 3: Conversational Intake & Single Follow-Up (OpenAI)</button>
+    </div>
+
+    <!-- ==================== FLOW 1 PANEL ==================== -->
+    <div id="panel-flow1">
+      <div class="scenarios-bar">
+        <span class="scenarios-label">⚡ Test Scenarios (Click to test End-to-End with Natural Language Normalization):</span>
+        <div class="scenario-buttons">
+          <button class="btn-scenario crit" onclick="setPatientInput('Doc, my head is killing me and I fainted yesterday. No chest pain.')">🧠 Colloquial: "My head is killing me and I fainted. No chest pain."</button>
+          <button class="btn-scenario crit" onclick="setPatientInput('It feels like an elephant sitting on my chest and I cannot catch my breath.')">🫀 Idiom: "Elephant sitting on my chest + can\'t catch breath"</button>
+          <button class="btn-scenario urg" onclick="setPatientInput('I am vomiting coffee-ground blood and cannot keep any water down.')">🩸 GI Bleed: "Vomiting coffee-ground blood + can\'t keep water down"</button>
+          <button class="btn-scenario norm" onclick="setPatientInput('I have a slight headache after working at my computer screen.')">🌿 Routine: "Slight headache from screen work"</button>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <div class="card">
+          <div class="card-title">🗣️ Step 1 & 2: Patient Input & AI Extraction</div>
+          <form onsubmit="event.preventDefault(); runFlow1();">
+            <div class="form-group">
+              <label class="form-label" style="font-weight: 600; color: #93c5fd;">💬 Patient Conversational Input (Voice / Text):</label>
+              <textarea id="patientConversationalInput" class="form-control" rows="2" style="border-color: #3b82f6; font-size: 0.92rem;" oninput="syncPatientInput()">I have a severe headache and I fainted yesterday.</textarea>
+            </div>
+
+            <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; margin-bottom: 12px;">
+              <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--accent-ayush); font-weight: 700; margin-bottom: 4px;">
+                🤖 AI Extraction Layer Output (Structured Clinical History):
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.78rem;">
+                <div><strong>Extracted Complaint:</strong> <span id="extractedComplaintText" style="color: #fca5a5;">I have a severe headache and I fainted yesterday.</span></div>
+                <div><strong>Patient Context:</strong> Age: <span id="dispAge">58</span> | Gender: <span id="dispGender">Male</span></div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div class="form-group">
+                <label class="form-label">Patient Age</label>
+                <input type="number" id="age" class="form-control" value="58" onchange="syncPatientInput()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Gender</label>
+                <select id="gender" class="form-control" onchange="syncPatientInput()">
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" style="display: none;">
+              <textarea id="complaints">I have a severe headache and I fainted yesterday.</textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Medical History / Past Context</label>
+              <textarea id="history" class="form-control" rows="1">No prior known chronic illnesses</textarea>
+            </div>
+
+            <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin: 10px 0 6px 0;">
+              🩺 Baseline Vitals
+            </div>
+
+            <div class="vitals-grid">
+              <div class="form-group">
+                <label class="form-label">BP (Sys / Dia mmHg)</label>
+                <div style="display: flex; gap: 4px;">
+                  <input type="number" id="sysBp" class="form-control" value="120">
+                  <input type="number" id="diaBp" class="form-control" value="80">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Heart Rate (bpm)</label>
+                <input type="number" id="hr" class="form-control" value="76">
+              </div>
+              <div class="form-group">
+                <label class="form-label">SpO2 (%)</label>
+                <input type="number" id="spo2" class="form-control" value="98">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Temperature (°F)</label>
+                <input type="number" step="0.1" id="temp" class="form-control" value="98.6">
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit">
+              ⚡ Step 3 & 4: Run Red-Flag Screening Engine (POST /api/red-flags/screen)
+            </button>
+          </form>
+        </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🛡️ RedFlagResult Output (Doctor Dashboard Feed)</div>
+          <div id="flow1Results">
+            <div style="text-align: center; color: var(--text-dim); padding: 30px;">
+              Click <strong>Screen Red Flags</strong> to evaluate.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== FLOW 2 PANEL ==================== -->
+    <div id="panel-flow2" style="display: none;">
+      <div class="main-grid">
+        <div class="card">
+          <div class="card-title">📄 Medical Document Upload / Synthetic Test</div>
+          
+          <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 6px; padding: 12px; margin-bottom: 14px; font-size: 0.8rem; color: #93c5fd;">
+            💡 <strong>Synthetic Demo Data:</strong> Demonstrates electronic report text parsing and automatic linkage to the configured reference range detector. (Handwriting recognition is not supported).
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Synthetic Medical Report Text</label>
+            <textarea id="sampleReportText" class="form-control" rows="8" style="font-family: monospace; font-size: 0.78rem;">ALL INDIA INSTITUTE OF AYURVEDA (AIIA)
+CENTRAL CLINICAL LABORATORY (SYNTHETIC REPORT)
+Patient: DEMO-PATIENT-999 | Age: 52 | Male
+
+CLINICAL BIOCHEMISTRY & HEMATOLOGY:
+Hemoglobin: 10.2 g/dL (Ref: 12.0 - 16.0)
+Fasting Blood Glucose: 154.0 mg/dL (Ref: 70.0 - 100.0)
+Serum Creatinine: 0.9 mg/dL (Ref: 0.6 - 1.3)
+Platelet Count: 240000 /uL (Ref: 150000 - 450000)</textarea>
+          </div>
+
+          <button class="btn-submit" onclick="runFlow2WithText()">
+            🔬 Parse Report & Detect Abnormalities (POST /api/ocr/process-report)
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📊 OCRResult & Abnormality Detection Output</div>
+          <div id="flow2Results">
+            <div style="text-align: center; color: var(--text-dim); padding: 30px;">
+              Click <strong>Parse Report & Detect Abnormalities</strong> to run Flow 2.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== FLOW 3 PANEL (OPENAI CONVERSATIONAL INTAKE) ==================== -->
+    <div id="panel-flow3" style="display:none;">
+      <div class="scenarios-bar">
+        <span class="scenarios-label">⚡ Multi-Turn Conversational Tests (OpenAI + Deterministic Screening):</span>
+        <div class="scenario-buttons">
+          <button class="btn-scenario urg" onclick="startFlow3Scenario('I\'ve been vomiting for two days.')">
+            🧪 Scenario 1: "I've been vomiting for two days." (Test Follow-up Question)
+          </button>
+          <button class="btn-scenario crit" onclick="startFlow3Scenario('Doc, my head is killing me and I fainted yesterday at work. No chest pain.')">
+            🧠 Scenario 2: "Head killing me + fainted. No chest pain." (Test Strict Negation)
+          </button>
+          <button class="btn-scenario crit" onclick="startFlow3Scenario('It feels like an elephant sitting on my chest.')">
+            🫀 Scenario 3: "Elephant sitting on my chest." (Test Dyspnea Follow-Up)
+          </button>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <!-- Left Column: Conversational Dialogue -->
+        <div class="card">
+          <div class="card-title">💬 Patient Case-Taking Dialogue</div>
+          <div id="chatMessages" style="height: 340px; overflow-y: auto; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px;">
+            <!-- Message bubbles will appear here -->
+          </div>
+
+          <!-- Quick reply chips -->
+          <div id="quickRepliesBar" style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;"></div>
+
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="chatInput" class="form-control" placeholder="Type patient response..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+            <button class="btn-submit" style="width: auto; padding: 0 20px;" onclick="sendChatMessage()">Send</button>
+          </div>
+        </div>
+
+        <!-- Right Column: Extracted Facts & Doctor Summary -->
+        <div class="card">
+          <div class="card-title">🩺 Real-Time Case Intelligence & Doctor Summary</div>
+          
+          <div id="flow3AlertCard" style="margin-bottom: 12px;"></div>
+
+          <div id="flow3FollowUpBanner" style="display: none; background: rgba(234, 179, 8, 0.15); border: 1px solid #eab308; border-radius: 8px; padding: 10px; margin-bottom: 12px;">
+            <div style="font-size: 0.72rem; text-transform: uppercase; color: #facc15; font-weight: 700;">❓ Single Follow-Up Question Active:</div>
+            <div id="flow3FollowUpText" style="font-size: 0.86rem; color: #fef08a; margin-top: 4px; font-weight: 600;"></div>
+          </div>
+
+          <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; margin-bottom: 12px;">
+            <div style="font-size: 0.72rem; text-transform: uppercase; color: #93c5fd; font-weight: 700; margin-bottom: 6px;">
+              📋 Structured Clinical Facts (Strict Null for Unknowns):
+            </div>
+            <pre id="flow3FactsJson" style="font-size: 0.72rem; color: #cbd5e1; max-height: 130px; overflow-y: auto; margin: 0; background: transparent;">(Awaiting patient statement...)</pre>
+          </div>
+
+          <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
+            <div style="font-size: 0.72rem; text-transform: uppercase; color: #86efac; font-weight: 700; margin-bottom: 6px;">
+              📝 Doctor-Facing Intake Summary:
+            </div>
+            <div id="flow3DoctorSummary" style="font-size: 0.76rem; color: #e2e8f0; line-height: 1.4; white-space: pre-line;">(Awaiting intake completion...)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('panel-flow1').style.display = 'none';
+      document.getElementById('panel-flow2').style.display = 'none';
+      document.getElementById('panel-flow3').style.display = 'none';
+
+      if (tab === 'flow1') {
+        document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+        document.getElementById('panel-flow1').style.display = 'block';
+      } else if (tab === 'flow2') {
+        document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+        document.getElementById('panel-flow2').style.display = 'block';
+        runFlow2WithText();
+      } else if (tab === 'flow3') {
+        document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
+        document.getElementById('panel-flow3').style.display = 'block';
+        if (currentFlow3Conversation.length === 0) {
+          startFlow3Scenario("I've been vomiting for two days.");
+        }
+      }
+    }
+
+    const scenarios = {
+      acs: { age: 58, complaints: "Severe crushing chest pain radiating to left arm with breathing difficulty", sys: 185, dia: 115, hr: 112, spo2: 95, temp: 98.6 },
+      stroke: { age: 64, complaints: "Thunderclap severe headache and then passed out on the floor with facial droop", sys: 175, dia: 98, hr: 90, spo2: 97, temp: 98.6 },
+      gi: { age: 48, complaints: "Vomiting blood and black tarry stool for 2 days", sys: 105, dia: 65, hr: 104, spo2: 98, temp: 98.4 },
+      sepsis: { age: 71, complaints: "High fever and patient is acting confused and disoriented", sys: 88, dia: 54, hr: 122, spo2: 94, temp: 103.2 },
+      routine: { age: 34, complaints: "Mild sluggish digestion (Ajeerna) after heavy food for 3 weeks", sys: 118, dia: 76, hr: 72, spo2: 99, temp: 98.4 }
+    };
+
+    function syncPatientInput() {
+      const text = document.getElementById('patientConversationalInput').value;
+      document.getElementById('complaints').value = text;
+      document.getElementById('extractedComplaintText').innerText = text || "(None)";
+      document.getElementById('dispAge').innerText = document.getElementById('age').value || "--";
+      document.getElementById('dispGender').innerText = document.getElementById('gender').value || "--";
+    }
+
+    function setPatientInput(text) {
+      document.getElementById('patientConversationalInput').value = text;
+      syncPatientInput();
+      runFlow1();
+    }
+
+    function loadScenario(k) {
+      const s = scenarios[k];
+      document.getElementById('age').value = s.age;
+      document.getElementById('patientConversationalInput').value = s.complaints;
+      syncPatientInput();
+      document.getElementById('sysBp').value = s.sys;
+      document.getElementById('diaBp').value = s.dia;
+      document.getElementById('hr').value = s.hr;
+      document.getElementById('spo2').value = s.spo2;
+      document.getElementById('temp').value = s.temp;
+      runFlow1();
+    }
+
+    async function runFlow1() {
+      const payload = {
+        patient_id: "PT-DEMO-01",
+        age: parseInt(document.getElementById('age').value) || null,
+        gender: document.getElementById('gender').value,
+        chief_complaints: [document.getElementById('complaints').value].filter(Boolean),
+        medical_history: [document.getElementById('history').value].filter(Boolean),
+        vitals: {
+          systolic_bp: parseFloat(document.getElementById('sysBp').value) || null,
+          diastolic_bp: parseFloat(document.getElementById('diaBp').value) || null,
+          heart_rate: parseFloat(document.getElementById('hr').value) || null,
+          spo2: parseFloat(document.getElementById('spo2').value) || null,
+          temperature: parseFloat(document.getElementById('temp').value) || null
+        }
+      };
+
+      const resBox = document.getElementById('flow1Results');
+      resBox.innerHTML = "<div style='text-align:center; padding:20px;'>Screening clinical history...</div>";
+
+      try {
+        // Step 1: Tier 1 - Clinical Concept Normalization
+        const normRes = await fetch('/api/normalization/normalize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: document.getElementById('complaints').value,
+            vitals: payload.vitals,
+            age: payload.age,
+            gender: payload.gender
+          })
+        });
+        const normData = await normRes.json();
+
+        // Step 2: Tier 2 - Deterministic Red Flag Engine
+        const res = await fetch('/api/red-flags/screen', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(normData)
+        });
+        const data = await res.json();
+        
+        let normBadges = [];
+        if (normData.loss_of_consciousness !== null) {
+          normBadges.push(`<span class="cue-pill" style="background:rgba(239,68,68,0.2); border-color:#ef4444; color:#fca5a5;">loss_of_consciousness = ${normData.loss_of_consciousness}</span>`);
+        }
+        if (normData.breathing_difficulty !== null) {
+          normBadges.push(`<span class="cue-pill" style="background:rgba(239,68,68,0.2); border-color:#ef4444; color:#fca5a5;">breathing_difficulty = ${normData.breathing_difficulty}</span>`);
+        }
+        if (normData.ability_to_keep_fluids_down !== null) {
+          normBadges.push(`<span class="cue-pill" style="background:rgba(234,179,8,0.2); border-color:#eab308; color:#fde047;">ability_to_keep_fluids_down = ${normData.ability_to_keep_fluids_down}</span>`);
+        }
+        if (normData.bleeding && normData.bleeding.present) {
+          normBadges.push(`<span class="cue-pill" style="background:rgba(239,68,68,0.2); border-color:#ef4444; color:#fca5a5;">bleeding source = ${normData.bleeding.source}</span>`);
+        }
+        if (normData.relevant_negative_symptoms && normData.relevant_negative_symptoms.length > 0) {
+          normBadges.push(`<span class="cue-pill" style="background:rgba(34,197,94,0.2); border-color:#22c55e; color:#86efac;">pertinent negatives: [${normData.relevant_negative_symptoms.join(', ')}]</span>`);
+        }
+
+        let html = `
+          <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; margin-bottom: 12px;">
+            <div style="font-size: 0.74rem; text-transform: uppercase; color: #93c5fd; font-weight: 700; margin-bottom: 6px;">
+              🔍 Tier 1 Normalization Layer Output (Canonical Concepts & Facts):
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              ${normBadges.length > 0 ? normBadges.join('') : '<span style="font-size:0.78rem; color:var(--text-dim);">No acute flags (routine clinical concepts preserved)</span>'}
+            </div>
+          </div>
+
+          <div class="red-flag-card ${data.severity}">
+            <div class="flag-header">
+              <span class="flag-title">${data.detected ? '🚨 ' + data.message : '✅ No Predefined Red Flags'}</span>
+              <span class="flag-cat">${data.category} (${data.severity.toUpperCase()})</span>
+            </div>
+            <div style="margin: 8px 0;">
+              ${data.evidence.map(e => `<span class="cue-pill">${e}</span>`).join('')}
+            </div>
+            <div class="flag-action">
+              <strong>Recommendation:</strong> ${data.recommendation}
+            </div>
+            <div style="font-size:0.72rem; color:var(--text-dim); margin-top:8px;">
+              Rule ID: <code>${data.rule_id}</code> | ${data.disclaimer}
+            </div>
+          </div>
+        `;
+        resBox.innerHTML = html;
+      } catch (e) {
+        resBox.innerHTML = `<div style="color:#f87171;">Error: ${e.message}</div>`;
+      }
+    }
+
+    async function runFlow2WithText() {
+      const text = document.getElementById('sampleReportText').value;
+      const resBox = document.getElementById('flow2Results');
+      resBox.innerHTML = "<div style='text-align:center; padding:20px;'>Processing document via OCR & Abnormality Detector...</div>";
+
+      try {
+        // Post as a text file upload to /api/ocr/process-report
+        const blob = new Blob([text], { type: 'text/plain' });
+        const formData = new FormData();
+        formData.append('file', blob, 'synthetic_lab_report.txt');
+
+        const res = await fetch('/api/ocr/process-report', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+
+        let html = `
+          <div style="margin-bottom: 12px; font-size: 0.82rem; color: #34d399;">
+            ✅ <strong>Extraction Status:</strong> ${data.extraction_status.toUpperCase()} | Document: ${data.document_type}
+          </div>
+          
+          <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">
+            ⚠️ Evaluated Biomarkers (Abnormal Value Detector Output):
+          </div>
+          <table class="abnormal-table">
+            <thead>
+              <tr>
+                <th>Test Name</th>
+                <th>Observed</th>
+                <th>Status</th>
+                <th>Ref Range</th>
+                <th>Observation</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        data.evaluated_abnormalities.forEach(a => {
+          html += `
+            <tr>
+              <td><strong>${a.test_name}</strong></td>
+              <td><code>${a.value} ${a.unit}</code></td>
+              <td><span class="status-tag tag-${a.status}">${a.status}</span></td>
+              <td><span style="color:var(--text-dim);">${a.reference_low} - ${a.reference_high}</span></td>
+              <td style="color:var(--text-muted); font-size:0.75rem;">${a.message}</td>
+            </tr>
+          `;
+        });
+
+        html += `</tbody></table>
+          <div style="margin-top: 14px; font-size: 0.75rem; color: var(--text-dim);">
+            <strong>Preserved Raw OCR Text:</strong>
+            <div class="raw-box">${data.raw_text}</div>
+          </div>
+        `;
+
+        resBox.innerHTML = html;
+      } catch (e) {
+        resBox.innerHTML = `<div style="color:#f87171;">Error: ${e.message}</div>`;
+      }
+    }
+
+    // =================================================================
+    // FLOW 3: MULTI-TURN CONVERSATIONAL INTAKE (OPENAI)
+    // =================================================================
+
+    let currentFlow3History = null;
+    let currentFlow3Conversation = [];
+
+    function startFlow3Scenario(text) {
+      currentFlow3History = null;
+      currentFlow3Conversation = [];
+      document.getElementById('chatMessages').innerHTML = '';
+      document.getElementById('quickRepliesBar').innerHTML = '';
+      document.getElementById('chatInput').value = text;
+      sendChatMessage();
+    }
+
+    async function sendChatMessage(customText) {
+      const inputField = document.getElementById('chatInput');
+      const text = (customText || inputField.value || '').trim();
+      if (!text) return;
+      inputField.value = '';
+
+      // Append user bubble
+      appendChatBubble('user', text);
+      currentFlow3Conversation.push({ role: 'user', content: text });
+
+      document.getElementById('quickRepliesBar').innerHTML = '';
+
+      try {
+        const payload = {
+          message: text,
+          existing_history: currentFlow3History,
+          conversation_history: currentFlow3Conversation.slice(0, -1)
+        };
+
+        const res = await fetch('/api/ai/intake-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        currentFlow3History = data.updated_history;
+
+        // Render AI assistant response if follow-up question exists
+        if (data.follow_up_question && data.follow_up_question.question) {
+          const qText = data.follow_up_question.question;
+          appendChatBubble('assistant', qText);
+          currentFlow3Conversation.push({ role: 'assistant', content: qText });
+
+          document.getElementById('flow3FollowUpBanner').style.display = 'block';
+          document.getElementById('flow3FollowUpText').innerText = qText;
+
+          // Populate contextual quick replies
+          renderQuickReplies(data.follow_up_question.target_field);
+        } else {
+          document.getElementById('flow3FollowUpBanner').style.display = 'none';
+          appendChatBubble('assistant', 'Thank you. I have recorded all pertinent clinical details for your attending physician.');
+        }
+
+        // Render Red Flag screening card
+        renderFlow3AlertCard(data.screening_result);
+
+        // Render structured facts JSON
+        document.getElementById('flow3FactsJson').innerText = JSON.stringify(data.updated_history, null, 2);
+
+        // Render Doctor Summary
+        document.getElementById('flow3DoctorSummary').innerText = data.doctor_summary;
+
+      } catch (err) {
+        appendChatBubble('assistant', 'Error communicating with clinical service: ' + err.message);
+      }
+    }
+
+    function appendChatBubble(sender, text) {
+      const box = document.getElementById('chatMessages');
+      const bubble = document.createElement('div');
+      bubble.style.padding = '10px 14px';
+      bubble.style.borderRadius = '10px';
+      bubble.style.fontSize = '0.84rem';
+      bubble.style.maxWidth = '85%';
+      bubble.style.lineHeight = '1.4';
+
+      if (sender === 'user') {
+        bubble.style.alignSelf = 'flex-end';
+        bubble.style.background = '#2563eb';
+        bubble.style.color = '#ffffff';
+      } else {
+        bubble.style.alignSelf = 'flex-start';
+        bubble.style.background = '#1e293b';
+        bubble.style.border = '1px solid #334155';
+        bubble.style.color = '#e2e8f0';
+      }
+      bubble.innerText = text;
+      box.appendChild(bubble);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function renderQuickReplies(field) {
+      const bar = document.getElementById('quickRepliesBar');
+      bar.innerHTML = '';
+      let replies = [];
+      if (field === 'unable_to_keep_fluids') {
+        replies = [
+          'No, I throw up any water immediately.',
+          'Yes, I can drink water and fluids normally.'
+        ];
+      } else if (field === 'blood_in_vomit') {
+        replies = [
+          'No blood in my vomit.',
+          'Yes, throwing up dark coffee-ground looking blood.'
+        ];
+      } else if (field === 'loss_of_consciousness') {
+        replies = [
+          'No fainting or blackouts.',
+          'Yes, I fainted and lost consciousness.'
+        ];
+      } else if (field === 'breathing_difficulty') {
+        replies = [
+          'No shortness of breath.',
+          'Yes, I can barely catch my breath.'
+        ];
+      }
+
+      replies.forEach(r => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-scenario norm';
+        btn.style.fontSize = '0.76rem';
+        btn.style.padding = '5px 10px';
+        btn.innerText = r;
+        btn.onclick = () => sendChatMessage(r);
+        bar.appendChild(btn);
+      });
+    }
+
+    function renderFlow3AlertCard(data) {
+      const container = document.getElementById('flow3AlertCard');
+      container.innerHTML = `
+        <div class="red-flag-card ${data.severity}">
+          <div class="flag-header">
+            <span class="flag-title">${data.detected ? '🚨 ' + data.message : '✅ No Immediate Red Flags'}</span>
+            <span class="flag-cat">${data.category} (${data.severity.toUpperCase()})</span>
+          </div>
+          <div style="margin: 6px 0;">
+            ${(data.evidence || []).map(e => `<span class="cue-pill">${e}</span>`).join('')}
+          </div>
+          <div class="flag-action">
+            <strong>Triage Recommendation:</strong> ${data.recommendation}
+          </div>
+          <div style="font-size:0.7rem; color:var(--text-dim); margin-top:6px;">
+            Rule ID: <code>${data.rule_id}</code> | ${data.disclaimer}
+          </div>
+        </div>
+      `;
+    }
+
+    // Auto load on start
+    window.addEventListener('DOMContentLoaded', () => {
+      runFlow1();
+    });
+  </script>
+</body>
+</html>

@@ -116,7 +116,7 @@ const ChatInput = ({
           <span className="flex items-center gap-1 ml-auto">
             <span>Confidential clinical interview</span>
             <span>•</span>
-            <span>ABDM & DPDP Act 2023 protected</span>
+            <span>Designed with DPDP principles</span>
           </span>
         </div>
       </div>

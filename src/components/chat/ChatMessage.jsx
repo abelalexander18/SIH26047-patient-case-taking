@@ -45,6 +45,32 @@ const ChatMessage = ({ message }) => {
         >
           <p className="whitespace-pre-wrap">{message.text}</p>
 
+          {/* Clinical Safety Alert Banner (Deterministic Screening) */}
+          {((message.screeningResult && message.screeningResult.detected) || (message.redFlagResult && message.redFlagResult.detected)) && (
+            <div className="mt-3 p-3.5 rounded-xl bg-amber-50 border border-amber-200/90 text-slate-800 text-xs flex flex-col gap-2 shadow-2xs">
+              <div className="flex items-center gap-1.5 font-semibold text-amber-900 text-[12px]">
+                <span className="text-amber-600 font-bold text-sm leading-none">⚠</span>
+                <span>Potential Red Flag</span>
+              </div>
+              <p className="text-slate-800 text-[12px] leading-relaxed font-medium">
+                {(() => {
+                  const res = message.redFlagResult || message.screeningResult;
+                  const flags = res.flags || [];
+                  if (flags.length > 0 && Array.isArray(flags[0].evidence) && flags[0].evidence.length > 0) {
+                    return `${flags[0].evidence.join(' associated with ')}.`;
+                  }
+                  return res.message || 'Potential clinical safety pattern identified.';
+                })()}
+              </p>
+              <p className="text-slate-600 text-[11px]">
+                Prompt clinical evaluation may be appropriate.
+              </p>
+              <div className="text-[10px] text-slate-500 pt-1.5 border-t border-amber-200/80">
+                Screening alert — not a diagnosis.
+              </div>
+            </div>
+          )}
+
           {/* Attached Document Pill if available */}
           {message.attachedFile && (
             <div

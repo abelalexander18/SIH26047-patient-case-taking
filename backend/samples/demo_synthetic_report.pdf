@@ -1,0 +1,52 @@
+%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >> endobj
+4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Courier >> endobj
+5 0 obj << /Length 1344 >> stream
+BT
+/F1 10 Tf
+50 750 Td
+(========================================================) Tj
+0 -14 Td (CENTRAL CLINICAL LABORATORY & PRE-CONSULTATION INTAKE) Tj
+0 -14 Td (========================================================) Tj
+0 -14 Td (SYNTHETIC DEMO REPORT - FOR PROTOTYPE TESTING ONLY) Tj
+0 -14 Td () Tj
+0 -14 Td (Date: 2026-09-10) Tj
+0 -14 Td (Patient Name: Demo Patient) Tj
+0 -14 Td (Age: 52) Tj
+0 -14 Td (Gender: Male) Tj
+0 -14 Td () Tj
+0 -14 Td (VITALS:) Tj
+0 -14 Td (--------------------------------------------------------) Tj
+0 -14 Td (Blood Pressure: 150/95 mmHg) Tj
+0 -14 Td (Temperature: 102 °F) Tj
+0 -14 Td () Tj
+0 -14 Td (CLINICAL LABORATORY RESULTS:) Tj
+0 -14 Td (--------------------------------------------------------) Tj
+0 -14 Td (Hemoglobin: 10.2 g/dL Reference Range: 12.0 - 16.0 g/dL) Tj
+0 -14 Td (Glucose: 95 mg/dL Reference Range: 70.0 - 100.0 mg/dL) Tj
+0 -14 Td (Serum Creatinine: 0.9 mg/dL Reference Range: 0.6 - 1.3 mg/dL) Tj
+0 -14 Td () Tj
+0 -14 Td (MEDICATIONS:) Tj
+0 -14 Td (--------------------------------------------------------) Tj
+0 -14 Td (Medication: Paracetamol 500 mg) Tj
+0 -14 Td () Tj
+0 -14 Td (INVESTIGATIONS:) Tj
+0 -14 Td (--------------------------------------------------------) Tj
+0 -14 Td (Routine blood panel completed.) Tj
+0 -14 Td (========================================================) Tj
+ET
+endstream endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000244 00000 n 
+0000000318 00000 n 
+trailer << /Size 6 /Root 1 0 R >>
+startxref
+450
+%%EOF

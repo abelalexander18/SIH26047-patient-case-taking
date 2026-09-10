@@ -125,6 +125,54 @@ const ReportUploadModal = ({
               </button>
             </div>
 
+            {/* Extracted Medical Information Preview */}
+            {((uploadedFile.patient && uploadedFile.patient.name) || (uploadedFile.vitals && uploadedFile.vitals.length > 0) || (uploadedFile.laboratoryResults && uploadedFile.laboratoryResults.length > 0)) && (
+              <div className="mt-1 p-3 bg-white/90 rounded-lg border border-teal-200/90 text-xs space-y-2">
+                <div className="font-semibold text-slate-800 flex items-center justify-between">
+                  <span>Extracted Medical Information:</span>
+                  {uploadedFile.abnormalCount > 0 ? (
+                    <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
+                      {uploadedFile.abnormalCount} flagged for review
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                      Parameters within range
+                    </span>
+                  )}
+                </div>
+
+                {uploadedFile.patient && uploadedFile.patient.name && (
+                  <div className="text-slate-600 text-[11px]">
+                    <span className="font-medium text-slate-700">Patient:</span> {uploadedFile.patient.name}
+                    {uploadedFile.patient.age ? ` (${uploadedFile.patient.age}y)` : ''}
+                    {uploadedFile.patient.sex ? ` • ${uploadedFile.patient.sex}` : ''}
+                  </div>
+                )}
+
+                {uploadedFile.vitals && uploadedFile.vitals.length > 0 && (
+                  <div className="text-slate-600 text-[11px]">
+                    <span className="font-medium text-slate-700">Vitals:</span>{' '}
+                    {uploadedFile.vitals.map((v) => `${v.name || v.test_name}: ${v.value} ${v.unit} [${(v.status || '').toUpperCase()}]`).join(', ')}
+                  </div>
+                )}
+
+                {uploadedFile.laboratoryResults && uploadedFile.laboratoryResults.length > 0 && (
+                  <div className="text-slate-600 text-[11px]">
+                    <span className="font-medium text-slate-700">Lab Results ({uploadedFile.laboratoryResults.length}):</span>{' '}
+                    {uploadedFile.laboratoryResults.slice(0, 3).map((l) => `${l.test_name}: ${l.value} ${l.unit} [${(l.status || '').toUpperCase()}]`).join(', ')}
+                    {uploadedFile.laboratoryResults.length > 3 ? '...' : ''}
+                  </div>
+                )}
+
+                {uploadedFile.medications && uploadedFile.medications.length > 0 && (
+                  <div className="text-slate-600 text-[11px]">
+                    <span className="font-medium text-slate-700">Medications:</span>{' '}
+                    {uploadedFile.medications.map((m) => `${m.name}${m.dose ? ` ${m.dose}` : ''}`).join(', ')}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="flex items-center justify-between pt-2 border-t border-teal-100 text-xs text-slate-600">
               <span>Attached to your clinical interview</span>
               <button
@@ -158,7 +206,7 @@ const ReportUploadModal = ({
               />
             </div>
             <p className="text-[11px] text-slate-400 text-center">
-              Encrypting & extracting clinical biomarkers...
+              Processing document & checking laboratory ranges...
             </p>
           </div>
         )}

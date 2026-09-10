@@ -1,0 +1,215 @@
+{
+  "vitals": {
+    "systolic_bp": {
+      "display_name": "Systolic Blood Pressure",
+      "unit": "mmHg",
+      "normal_min": 90,
+      "normal_max": 120,
+      "low_threshold": 90,
+      "critical_low": 80,
+      "high_threshold": 140,
+      "critical_high": 180,
+      "implications": {
+        "CRITICAL_LOW": "Profound hypotension / potential circulatory collapse or shock",
+        "LOW": "Mild to moderate hypotension; assess volume status and orthostatic symptoms",
+        "HIGH": "Stage 2 Hypertension; monitor cardiovascular workload",
+        "CRITICAL_HIGH": "Hypertensive crisis; immediate assessment for end-organ damage required"
+      }
+    },
+    "diastolic_bp": {
+      "display_name": "Diastolic Blood Pressure",
+      "unit": "mmHg",
+      "normal_min": 60,
+      "normal_max": 80,
+      "low_threshold": 60,
+      "critical_low": 50,
+      "high_threshold": 90,
+      "critical_high": 120,
+      "implications": {
+        "CRITICAL_LOW": "Severely reduced diastolic perfusion pressure; coronary perfusion risk",
+        "LOW": "Low diastolic pressure; check for volume depletion or vasodilatory state",
+        "HIGH": "Elevated diastolic pressure; prolonged vascular strain",
+        "CRITICAL_HIGH": "Hypertensive urgency/crisis; high risk of acute neurological or cardiac events"
+      }
+    },
+    "heart_rate": {
+      "display_name": "Heart Rate / Pulse",
+      "unit": "bpm",
+      "normal_min": 60,
+      "normal_max": 100,
+      "low_threshold": 60,
+      "critical_low": 40,
+      "high_threshold": 100,
+      "critical_high": 140,
+      "implications": {
+        "CRITICAL_LOW": "Severe symptomatic bradycardia; evaluate for AV block or sick sinus syndrome",
+        "LOW": "Mild sinus bradycardia; correlate with athletic conditioning or beta-blocker use",
+        "HIGH": "Tachycardia; assess for fever, pain, dehydration, anemia, or arrhythmia",
+        "CRITICAL_HIGH": "Severe tachyarrhythmia; hemodynamically destabilizing, immediate ECG indicated"
+      }
+    },
+    "respiratory_rate": {
+      "display_name": "Respiratory Rate",
+      "unit": "breaths/min",
+      "normal_min": 12,
+      "normal_max": 20,
+      "low_threshold": 12,
+      "critical_low": 8,
+      "high_threshold": 24,
+      "critical_high": 32,
+      "implications": {
+        "CRITICAL_LOW": "Impending respiratory arrest or profound central nervous system depression",
+        "LOW": "Bradypnea; evaluate for sedation or metabolic alkalosis",
+        "HIGH": "Tachypnea; early sensitive marker of systemic distress, sepsis, or acidosis",
+        "CRITICAL_HIGH": "Severe tachypnea; impending respiratory muscle fatigue and failure"
+      }
+    },
+    "spo2": {
+      "display_name": "Oxygen Saturation (SpO2)",
+      "unit": "%",
+      "normal_min": 95,
+      "normal_max": 100,
+      "low_threshold": 94,
+      "critical_low": 88,
+      "high_threshold": null,
+      "critical_high": null,
+      "implications": {
+        "CRITICAL_LOW": "Critical hypoxemia; immediate supplemental oxygenation and airway evaluation indicated",
+        "LOW": "Mild to moderate hypoxia; further pulmonary assessment warranted",
+        "NORMAL": "Adequate peripheral arterial oxygen saturation"
+      }
+    },
+    "temperature_f": {
+      "display_name": "Body Temperature",
+      "unit": "°F",
+      "normal_min": 97.0,
+      "normal_max": 99.1,
+      "low_threshold": 96.5,
+      "critical_low": 95.0,
+      "high_threshold": 100.4,
+      "critical_high": 104.0,
+      "implications": {
+        "CRITICAL_LOW": "Clinical hypothermia; assess environmental exposure or severe sepsis",
+        "LOW": "Subnormal temperature; recheck technique, evaluate frail/elderly baseline",
+        "HIGH": "Pyrexia / Fever; indicates inflammatory or infectious process",
+        "CRITICAL_HIGH": "Hyperpyrexia; risk of febrile encephalopathy and cellular injury"
+      }
+    },
+    "blood_glucose_fasting": {
+      "display_name": "Fasting Blood Glucose",
+      "unit": "mg/dL",
+      "normal_min": 70,
+      "normal_max": 100,
+      "low_threshold": 70,
+      "critical_low": 55,
+      "high_threshold": 126,
+      "critical_high": 300,
+      "implications": {
+        "CRITICAL_LOW": "Neuroglycopenic hypoglycemia crisis; immediate fast-acting glucose required",
+        "LOW": "Mild hypoglycemia; risk of cognitive impairment and autonomic response",
+        "HIGH": "Hyperglycemia consistent with impaired glucose metabolism / diabetes",
+        "CRITICAL_HIGH": "Severe hyperglycemia; assess for ketoacidosis or hyperosmolar crisis"
+      }
+    },
+    "blood_glucose_random": {
+      "display_name": "Random Blood Glucose",
+      "unit": "mg/dL",
+      "normal_min": 70,
+      "normal_max": 140,
+      "low_threshold": 70,
+      "critical_low": 55,
+      "high_threshold": 200,
+      "critical_high": 350,
+      "implications": {
+        "CRITICAL_LOW": "Severe hypoglycemia crisis; urgent physician evaluation indicated",
+        "LOW": "Hypoglycemia; review oral hypoglycemic or insulin timing",
+        "HIGH": "Marked post-prandial / random hyperglycemia",
+        "CRITICAL_HIGH": "Extreme hyperglycemia; high risk of metabolic decompensation"
+      }
+    }
+  },
+  "labs": {
+    "hemoglobin": {
+      "display_name": "Hemoglobin (Hb)",
+      "aliases": ["hb", "hgb", "hemoglobin"],
+      "unit": "g/dL",
+      "normal_min": 12.0,
+      "normal_max": 17.5,
+      "low_threshold": 11.5,
+      "critical_low": 7.0,
+      "high_threshold": 18.0,
+      "critical_high": 20.0,
+      "implications": {
+        "CRITICAL_LOW": "Severe symptomatic anemia; potential red cell transfusion threshold",
+        "LOW": "Anemia; assess iron, B12, or occult blood loss etiology",
+        "HIGH": "Polycythemia / erythrocytosis; increased thrombotic risk",
+        "CRITICAL_HIGH": "Hyperviscosity syndrome risk; urgent hematology review"
+      }
+    },
+    "platelet_count": {
+      "display_name": "Platelet Count",
+      "aliases": ["platelets", "platelet", "plt"],
+      "unit": "/uL",
+      "normal_min": 150000,
+      "normal_max": 450000,
+      "low_threshold": 150000,
+      "critical_low": 20000,
+      "high_threshold": 450000,
+      "critical_high": 1000000,
+      "implications": {
+        "CRITICAL_LOW": "Severe thrombocytopenia; high risk of spontaneous mucosal/CNS hemorrhage",
+        "LOW": "Thrombocytopenia; evaluate drug-induced, viral, or immune etiology",
+        "HIGH": "Reactive or essential thrombocytosis; monitor thrombosis risk",
+        "CRITICAL_HIGH": "Extreme thrombocytosis; paradoxically elevated risk of thrombosis or acquired VWD"
+      }
+    },
+    "wbc_count": {
+      "display_name": "Total Leukocyte Count (WBC)",
+      "aliases": ["wbc", "tlc", "white blood cells"],
+      "unit": "/uL",
+      "normal_min": 4000,
+      "normal_max": 11000,
+      "low_threshold": 4000,
+      "critical_low": 2000,
+      "high_threshold": 12000,
+      "critical_high": 30000,
+      "implications": {
+        "CRITICAL_LOW": "Severe neutropenia / leukopenia; high vulnerability to opportunistic infection",
+        "LOW": "Mild leukopenia; assess viral suppressive or marrow etiology",
+        "HIGH": "Leukocytosis; typical response to acute infection, inflammation, or stress",
+        "CRITICAL_HIGH": "Leukemoid reaction or hematologic malignancy; urgent smear evaluation"
+      }
+    },
+    "serum_creatinine": {
+      "display_name": "Serum Creatinine",
+      "aliases": ["creatinine", "serum creatinine", "creat"],
+      "unit": "mg/dL",
+      "normal_min": 0.6,
+      "normal_max": 1.3,
+      "low_threshold": 0.5,
+      "critical_low": null,
+      "high_threshold": 1.4,
+      "critical_high": 4.0,
+      "implications": {
+        "HIGH": "Elevated creatinine; potential acute kidney injury or chronic renal compromise",
+        "CRITICAL_HIGH": "Severe renal impairment; monitor electrolyte balance and fluid overload risk",
+        "LOW": "Low creatinine; often secondary to low muscle mass or cachexia"
+      }
+    },
+    "total_bilirubin": {
+      "display_name": "Total Bilirubin",
+      "aliases": ["bilirubin", "total bilirubin", "bili"],
+      "unit": "mg/dL",
+      "normal_min": 0.2,
+      "normal_max": 1.2,
+      "low_threshold": null,
+      "critical_low": null,
+      "high_threshold": 1.5,
+      "critical_high": 12.0,
+      "implications": {
+        "HIGH": "Hyperbilirubinemia / clinical jaundice; hepatic or biliary obstruction pattern",
+        "CRITICAL_HIGH": "Severe hepatic dysfunction or massive hemolysis"
+      }
+    }
+  }
+}

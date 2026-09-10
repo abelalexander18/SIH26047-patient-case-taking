@@ -1,8 +1,10 @@
 import React from 'react';
-import { ShieldCheck, Activity, AlertCircle, PhoneCall } from 'lucide-react';
+import { ShieldCheck, Activity, AlertCircle, PhoneCall, Stethoscope } from 'lucide-react';
 import Badge from '../common/Badge';
+import { useInterview } from '../../context/InterviewContext';
 
 const Header = ({ onStartInterview, appName = "Arogya AI" }) => {
+  const { setViewMode } = useInterview();
   return (
     <header className="w-full border-b border-slate-200/80 bg-white/85 backdrop-blur-md sticky top-0 z-30 transition-all">
       {/* Top micro-bar for Indian emergency disclaimer */}
@@ -16,7 +18,7 @@ const Header = ({ onStartInterview, appName = "Arogya AI" }) => {
           </div>
           <div className="hidden md:flex items-center gap-2 text-slate-400 text-[11px]">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>ABDM Gateway Online</span>
+            <span>ABDM-Ready Architecture</span>
           </div>
         </div>
       </div>
@@ -55,13 +57,25 @@ const Header = ({ onStartInterview, appName = "Arogya AI" }) => {
         <div className="flex items-center gap-4">
           <div className="hidden lg:flex items-center gap-2 text-xs text-slate-600 bg-slate-50 border border-slate-200/80 px-3 py-1.5 rounded-full">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span className="font-medium text-slate-700">DPDP Act 2023 Compliant</span>
+            <span className="font-medium text-slate-700">Designed with DPDP Principles</span>
           </div>
+
+          <button
+            onClick={() => setViewMode('doctor')}
+            className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-blue-700 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 px-3 sm:px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            title="Open Doctor Interface & Clinical Dashboard"
+          >
+            <Stethoscope className="w-4 h-4 text-blue-600 shrink-0" />
+            <span>Doctor Portal</span>
+          </button>
 
           {onStartInterview && (
             <button
-              onClick={onStartInterview}
-              className="text-xs sm:text-sm font-semibold text-slate-900 bg-slate-100 hover:bg-slate-200/80 px-4 py-2 rounded-xl transition-colors cursor-pointer"
+              onClick={() => {
+                setViewMode('patient');
+                onStartInterview();
+              }}
+              className="text-xs sm:text-sm font-semibold text-white bg-teal-700 hover:bg-teal-800 px-4 py-2 rounded-xl transition-colors cursor-pointer shadow-xs"
             >
               Start Intake
             </button>
